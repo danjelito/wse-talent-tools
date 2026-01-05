@@ -68,7 +68,13 @@ if calculate:
         st.write(
             """
             1. Take-home pay is calculated as: Base Salary + Tax + JHT Employee + JP Employee + JKN Employee.
-            2. The Salary Calculator is a simulation tool and cannot be used as a legal reference. In case the actual salary differs from the calculations listed here, refer to official regulation.
+            2. Net pay in December may differ due to tax reconciliation under Indonesian tax regulations effective from 1 January 2024.  
+            - From January to November, income tax is calculated using the Effective Average Rate (TER).  
+            - In December, income tax is recalculated using Article 17 (PPh Pasal 17).  
+            As a result, some employees may pay lower tax from January to November and higher tax in December, while others may experience the opposite.  
+            The difference depends on individual conditions such as joining date, base salary, allowances, insurance, BPJS contributions, and other annual income components.
+            3. This calculation assumes the tax period is January to November.
+            4. The Salary Calculator is a simulation tool and cannot be used as a legal reference. In case the actual salary differs from the calculations shown here, refer to official regulations.
             """
         )
         st.divider()

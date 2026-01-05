@@ -56,8 +56,8 @@ def calculate_jkm(base_salary):
 
 
 def calculate_jp(base_salary):
-    jp_company = round(2.0 / 100 * min(base_salary, 10_042_300), 0)
-    jp_employee = round(1.0 / 100 * min(base_salary, 10_042_300), 0)
+    jp_company = round(2.0 / 100 * min(base_salary, 10_547_400), 0)
+    jp_employee = round(1.0 / 100 * min(base_salary, 10_547_400), 0)
     return jp_company, jp_employee
 
 
