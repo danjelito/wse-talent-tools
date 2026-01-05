@@ -1,0 +1,11 @@
+[project]
+name = "2023-12-26-to-calculator-and-tools"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "holidays>=0.87",
+    "numpy>=2.4.0",
+    "openpyxl>=3.1.5",
+    "pandas>=2.3.3",
+    "streamlit>=1.52.2",
+]
