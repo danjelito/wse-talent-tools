@@ -2,27 +2,30 @@ import streamlit as st
 from dateutil.relativedelta import relativedelta
 
 st.header("Bonus Calculator")
-st.write("We give bonus for resigning employees who have served us for a long time.")
+st.write("Estimate bonus eligibility based on completed service period.")
+st.caption("This calculator follows the internal tenure threshold rule.")
 st.divider()
 
-
-# date selector
+st.subheader("Input")
 col1, col2 = st.columns(2)
 with col1:
     start_date = st.date_input(
-        "Select employment start date", format="DD/MM/YYYY", value=None
+        "Employment start date",
+        format="DD/MM/YYYY",
+        value=None,
     )
-    st.warning("Choose the date at which the employee became **permanent** employee.")
+    st.caption("Use the date when the employee became permanent.")
 with col2:
     end_date = st.date_input(
-        "Select last working date", format="DD/MM/YYYY", value=None
+        "Last working date",
+        format="DD/MM/YYYY",
+        value=None,
     )
 
 
 if start_date is not None and end_date is not None:
-    # start date must be <= end date
     if end_date <= start_date:
-        st.error("End date must be after start date")
+        st.error("Last working date must be after employment start date.")
     else:
         diff = relativedelta(end_date, start_date)
         if diff.years >= 7:
@@ -32,11 +35,15 @@ if start_date is not None and end_date is not None:
         else:
             bonus = "**:red[0]**."
 
-        # write the result
         st.subheader("Result")
         st.write(
             f"""
-            Working period = **{diff.years} years {diff.months} months {diff.days} days**.
+            Service period = **{diff.years} years {diff.months} months {diff.days} days**.
         """
         )
-        st.write(f"Bonus = {bonus}")
+        st.write(f"Bonus entitlement = {bonus}")
+
+        with st.expander("Rule used in this page"):
+            st.write("- 7 years or more: 3x base salary.")
+            st.write("- 5 to <7 years: 2x base salary.")
+            st.write("- Below 5 years: no bonus.")

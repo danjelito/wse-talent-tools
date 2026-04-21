@@ -4,16 +4,14 @@ from src import last_salary_hold
 
 st.header("Hold or Pay Last Salary?")
 st.write(
-    "Salary for resigning employees should be held, with a **minimum withholding of one month's salary**."
+    "Review whether salary should be held or paid for a resigning employee across payroll cycles."
 )
+st.caption("Policy note: this page reflects the one-month minimum withholding approach.")
 st.divider()
 
+st.subheader("Input")
+last_wd = st.date_input("Last working day", format="DD/MM/YYYY", value=None)
 
-# last working days selector
-last_wd = st.date_input("**Select last working day**", format="DD/MM/YYYY", value=None)
-
-
-# calculate last payroll cycle of that particular employee
 if last_wd and last_wd.day <= 23:
     last_payroll_cycle = last_wd + pd.DateOffset(day=23)
 elif last_wd and last_wd.day > 23:
@@ -21,11 +19,10 @@ elif last_wd and last_wd.day > 23:
 
 
 if last_wd:
-    # the closing of payroll cycle
     last_6_payroll_cycle_ending = [
         last_payroll_cycle - pd.DateOffset(months=i) for i in range(0, 7, 1)
     ]
-    # the corresponding opening of payrol cycle
+
     last_6_payroll_cycle_beginning = [
         d - pd.DateOffset(months=1) - pd.DateOffset(day=24)
         for d in last_6_payroll_cycle_ending
@@ -38,11 +35,11 @@ if last_wd:
         f"**{last_6_payroll_cycle_beginning[0].strftime('%d %b %Y')}** - "
         f"**{last_6_payroll_cycle_ending[0].strftime('%d %b %Y')}**",
     )
-    # iterate over last 6 payroll cycles
+
+    st.markdown("#### Pay or Hold by Cycle")
     for payroll_start, payroll_end in zip(
         last_6_payroll_cycle_beginning, last_6_payroll_cycle_ending
     ):
-        # whether to pay salay for this month or not
         pay = last_salary_hold.hold_or_pay(
             last_wd=last_wd, payroll_cycle_end_date=payroll_end
         )
@@ -54,4 +51,11 @@ if last_wd:
             f"- {payroll_start.strftime('%d %b %Y')} - ",
             f"{payroll_end.strftime('%d %b %Y')} :",
             payment_status,
+        )
+
+    with st.expander("How this decision is interpreted"):
+        st.write("- Hold: salary is withheld for that payroll cycle.")
+        st.write("- Pay: salary can be processed for that payroll cycle.")
+        st.write(
+            "- Always validate final action with your internal payroll policy owner."
         )

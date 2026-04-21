@@ -1,7 +1,8 @@
 import pandas as pd
-from pprint import pprint
 
 tax_brackets = pd.read_excel("src/ter.xlsx")
+JP_MONTHLY_CAP = 11_086_300
+JKN_MONTHLY_CAP = 12_000_000
 
 
 def convert_tax_status_to_ter_group(tax_status):
@@ -36,6 +37,8 @@ def find_tax_percentage(tax_brackets, gross_salary, tax_status):
 def calculate_tax(tax_brackets, gross_salary, tax_status):
     """Find tax given gross salary and TER group."""
     ter = find_tax_percentage(tax_brackets, gross_salary, tax_status)
+    if ter is None:
+        raise ValueError("No TER bracket found for this salary and tax status.")
     return round(gross_salary * ter, 0)
 
 
@@ -45,8 +48,8 @@ def calculate_jht(base_salary):
     return jht_company, jht_employee
 
 
-def calculate_jkk(base_salary):
-    jkk_company = round(0.24 / 100 * base_salary, 0)
+def calculate_jkk(base_salary, rate_percentage=0.24):
+    jkk_company = round(rate_percentage / 100 * base_salary, 0)
     return jkk_company
 
 
@@ -56,21 +59,30 @@ def calculate_jkm(base_salary):
 
 
 def calculate_jp(base_salary):
-    jp_company = round(2.0 / 100 * min(base_salary, 10_547_400), 0)
-    jp_employee = round(1.0 / 100 * min(base_salary, 10_547_400), 0)
+    pension_base = min(base_salary, JP_MONTHLY_CAP)
+    jp_company = round(2.0 / 100 * pension_base, 0)
+    jp_employee = round(1.0 / 100 * pension_base, 0)
     return jp_company, jp_employee
 
 
 def calculate_jkn(base_salary):
-    jkn_company = round(4.0 / 100 * min(base_salary, 12_000_000), 0)
-    jkn_employee = round(1.0 / 100 * min(base_salary, 12_000_000), 0)
+    health_base = min(base_salary, JKN_MONTHLY_CAP)
+    jkn_company = round(4.0 / 100 * health_base, 0)
+    jkn_employee = round(1.0 / 100 * health_base, 0)
     return jkn_company, jkn_employee
 
 
-def calculate_thp(base_salary, tax_status, insurance_premium, is_bpjs_tk, is_bpjs_kes):
+def calculate_thp(
+    base_salary,
+    tax_status,
+    insurance_premium,
+    is_bpjs_tk,
+    is_bpjs_kes,
+    jkk_rate_percentage=0.24,
+):
     if is_bpjs_tk:
         jht_company, jht_employee = calculate_jht(base_salary)
-        jkk_company = calculate_jkk(base_salary)
+        jkk_company = calculate_jkk(base_salary, rate_percentage=jkk_rate_percentage)
         jkm_company = calculate_jkm(base_salary)
         jp_company, jp_employee = calculate_jp(base_salary)
     else:
